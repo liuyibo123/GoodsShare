@@ -18,20 +18,16 @@ import retrofit2.http.Query;
 public interface RequestService {
     @POST("/maintable/add_new")
     Call<MyResponse> addMainTable(@Body MainTable table);
-
-
     @GET("/maintable/find_all")
     Call<List<MainTable>> getOrders();
-
-
     @GET("/maintable/findbycontent")
     Call<List<MainTable>> getOrdersByContent(@Query("query") String query);
     @POST("/regist/")
     Call<String> register(@Body User user);
-    @POST("/user/login")
+    @POST("/login/")
     Call<String> login(@Body User user);
-    @GET("/user/getuser")
-    Call<User> getUser(@Query("name") String name);
+    @POST("/getuser/")
+    Call<User> getUser(@Body User user);
     @GET("maintable/acceptorder")
     Call<String> acceptOrder(@Query("id") int id, @Query("name") String username);
 
@@ -48,4 +44,7 @@ public interface RequestService {
 
     @GET("maintable/finishorder")
     Call<Void> finishOrder(@Query("id") int id);
+
+    @GET("getgoods/")
+    Call<String> getGoods();
 }

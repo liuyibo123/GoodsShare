@@ -324,31 +324,31 @@
 //    }
 //
 //    void refresh() {
-//
-//        Call<List<MainTable>> call = requestService.getOrders();
-//        call.enqueue(new Callback<List<MainTable>>() {
-//            @Override
-//            public void onResponse(Call<List<MainTable>> call, Response<List<MainTable>> response) {
-//                Log.d("MainPresenterImpl", "response.body():" + MyGson.toJson(response.body()));
-//
-//                OrderAdapter.ListItemClickListener listener = new OrderAdapter.ListItemClickListener() {
-//                    @Override
-//                    public void onListItemClick(int itemIndex) {
-//                        MainTable table = response.body().get(itemIndex);
-//                        ItemClick(table);
-//                    }
-//                };
-//                if (response.body().size() != 0) {
-//                    ordersholder.recyclerView.setAdapter(new OrderAdapter(response.body().size(), listener, response.body()));
-//                }
-//                ordersholder.swiperefresh.setRefreshing(false);
-//            }
-//            @Override
-//            public void onFailure(Call<List<MainTable>> call, Throwable t) {
-//                Toast.makeText(view, "错误：" + t, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+////
+////        Call<List<MainTable>> call = requestService.getOrders();
+////        call.enqueue(new Callback<List<MainTable>>() {
+////            @Override
+////            public void onResponse(Call<List<MainTable>> call, Response<List<MainTable>> response) {
+////                Log.d("MainPresenterImpl", "response.body():" + MyGson.toJson(response.body()));
+////
+////                OrderAdapter.ListItemClickListener listener = new OrderAdapter.ListItemClickListener() {
+////                    @Override
+////                    public void onListItemClick(int itemIndex) {
+////                        MainTable table = response.body().get(itemIndex);
+////                        ItemClick(table);
+////                    }
+////                };
+////                if (response.body().size() != 0) {
+////                    ordersholder.recyclerView.setAdapter(new OrderAdapter(response.body().size(), listener, response.body()));
+////                }
+////                ordersholder.swiperefresh.setRefreshing(false);
+////            }
+////            @Override
+////            public void onFailure(Call<List<MainTable>> call, Throwable t) {
+////                Toast.makeText(view, "错误：" + t, Toast.LENGTH_SHORT).show();
+////            }
+////        });
+////    }
 //    class OrdersViewHolder {
 //        View myView;
 //        RecyclerView recyclerView;

@@ -104,24 +104,18 @@ public class LoginActivity extends AppCompatActivity {
                 int a = Integer.parseInt(s);
                 switch (a) {
                     case 1:
-                        Call<User> userCall = requestService.getUser(username_string);
+                        Call<User> userCall = requestService.getUser(user);
                         userCall.enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {
                                 User user1 = response.body();
                                 SharedPreferences preferences = getSharedPreferences("user", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("name", name);
+                                editor.putString("username", name);
                                 editor.putString("password", password_string);
                                 editor.putString("sex", user1.getSex()==1?"男":"女");
-                                editor.putString("phone", user1.getPhonenumber());
+                                editor.putString("phonenumber", user1.getPhonenumber());
                                 editor.commit();
-                                JPushInterface.setAlias(getApplicationContext(), username_string, new TagAliasCallback() {
-                                    @Override
-                                    public void gotResult(int i, String s, Set<String> set) {
-
-                                    }
-                                });
                             }
 
                             @Override
@@ -136,10 +130,10 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }).show();
                         break;
-                    case 2:
+                    case 0:
                         Toast.makeText(LoginActivity.this, "用户名不存在", Toast.LENGTH_SHORT).show();
                         break;
-                    case 3:
+                    case 2:
                         Toast.makeText(LoginActivity.this, "用户名和密码不匹配", Toast.LENGTH_SHORT).show();
                         break;
                 }

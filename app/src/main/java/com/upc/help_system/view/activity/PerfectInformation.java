@@ -42,6 +42,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  */
 
 public class PerfectInformation extends Activity {
+    private final String TAG = "PerfectInformation";
     @BindView(R.id.sex)
     AutoCompleteTextView sex;
     @BindView(R.id.phone_number)
@@ -106,26 +107,20 @@ public class PerfectInformation extends Activity {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String s = response.body();
+                Log.d(TAG, "onResponse: "+s);
                 int a = Integer.parseInt(s);
                 switch (a) {
-                    case 1:
+                    case 0:
                         SharedPreferences preferences = getSharedPreferences("user", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("name", username_string);
+                        editor.putString("username", username_string);
                         editor.putString("password", password_string);
                         editor.putString("sex", sex_string);
-                        editor.putString("phone", phone_number_string);
+                        editor.putString("phonenumber", phone_number_string);
                         editor.commit();
-                        JPushInterface.setAlias(getApplicationContext(), username_string, new TagAliasCallback() {
-                            @Override
-                            public void gotResult(int i, String s, Set<String> set) {
-
-                            }
-                        });
                         Snackbar.make(getWindow().getDecorView(), "注册成功", Snackbar.LENGTH_SHORT).show();
-
                         break;
-                    case 2:
+                    case 1:
                         Toast.makeText(PerfectInformation.this, "用户名已经存在", Toast.LENGTH_SHORT).show();
                         break;
                 }

@@ -52,7 +52,6 @@ import cn.jpush.android.api.JPushInterface;
 
 
 public class MainActivity extends FragmentActivity {
-
     private final int SDK_PERMISSION_REQUEST = 127;
     @BindView(R.id.order)
     RadioButton order;
@@ -118,15 +117,14 @@ public class MainActivity extends FragmentActivity {
                     case R.id.navigation_item_signout:
                         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.clear().commit();
+                        editor.clear().apply();
                         clearString();
-                        presenter.clearString();
                         Toast.makeText(MainActivity.this, "注销成功", Toast.LENGTH_SHORT).show();
                         onResume();
                         break;
                     case R.id.navigation_item_change_password:
                         SharedPreferences sharedPreferences1 = getSharedPreferences("user", MODE_PRIVATE);
-                        username = sharedPreferences1.getString("name", "");
+                        username = sharedPreferences1.getString("username", "");
                         if (username == null || username.equals("")) {
                             Toast.makeText(MainActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
                             break;
@@ -262,7 +260,7 @@ public class MainActivity extends FragmentActivity {
         switch (view.getId()) {
             case R.id.order:
                 if (username != null && !username.equals("")) {
-                    presenter.showMyOrders();
+                   //todo 展示我的订单
                 } else {
                     Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
                     order.toggle();
@@ -270,7 +268,7 @@ public class MainActivity extends FragmentActivity {
                 }
                 break;
             case R.id.help:
-                presenter.showOrders();
+                //todo 显示所有订单
                 break;
             case R.id.community:
                 break;
@@ -284,13 +282,12 @@ public class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
-        nickname_string = sharedPreferences.getString("nickname", "");
         sex = sharedPreferences.getString("sex", "");
-        username = sharedPreferences.getString("name", "");
-        if (nickname_string == null || nickname_string.equals("")) {
+        username = sharedPreferences.getString("username", "");
+        if (username == null || username.equals("")) {
             nickname.setText("未登录");
         } else {
-            nickname.setText(nickname_string);
+            nickname.setText(username);
         }
         if (sex.equals("男")) {
             Resources resources = getApplicationContext().getResources();
