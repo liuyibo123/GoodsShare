@@ -1,0 +1,12 @@
+@startuml
+start
+:已经登录用户进入;
+:录入收入支出信息;
+if(保存？)then(yes)
+:保存到本地;
+:保存到云端;
+else(no)
+:主界面;
+endif
+stop
+@enduml

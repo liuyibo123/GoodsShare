@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--TODO 侧边栏头部设计-->
+    <ImageView
+        android:id="@+id/head_img"
+        android:layout_width="wrap_content"
+        android:layout_height="168dp"
+        android:background="@drawable/timg"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/head_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/head"
+        android:layout_marginLeft="38dp"
+        app:layout_constraintLeft_toLeftOf="@+id/head_img"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/head_img"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintVertical_bias="0.458" />
+
+    <TextView
+        android:id="@+id/nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="8dp"
+        android:text="汉东省最高检"
+        android:textColor="@color/secondary_text"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/head_img"
+        app:layout_constraintLeft_toRightOf="@+id/head_button"
+        app:layout_constraintTop_toTopOf="@+id/head_img"
+        app:layout_constraintVertical_bias="0.446" />
+
+    <Button
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="9dp"
+        android:layout_marginLeft="48dp"
+        android:background="@android:color/transparent"
+        android:text="登录"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/head_img"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="9dp"
+        android:layout_marginLeft="37dp"
+        android:background="@android:color/transparent"
+        android:text="注册"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/head_img"
+        app:layout_constraintLeft_toRightOf="@+id/login" />
+
+
+</android.support.constraint.ConstraintLayout>

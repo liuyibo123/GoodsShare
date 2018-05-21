@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_marginBottom="8dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_press_seletor"
+    android:paddingTop="8dp">
+
+    <ImageView
+        android:id="@+id/head"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/head" />
+
+    <TextView
+        android:id="@+id/order_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-6dp"
+        android:textColor="@color/secondary_text"
+        android:text="取快递"
+        app:layout_constraintTop_toBottomOf="@+id/order_content"
+        android:layout_marginLeft="46dp"
+        app:layout_constraintLeft_toLeftOf="@+id/order_content" />
+
+    <TextView
+        android:id="@+id/order_destination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="54dp"
+        android:layout_marginTop="0dp"
+        android:textColor="@color/secondary_text"
+        android:text="北门"
+
+        app:layout_constraintLeft_toRightOf="@+id/order_type"
+        app:layout_constraintTop_toBottomOf="@+id/order_content" />
+
+    <TextView
+        android:id="@+id/order_charge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="0dp"
+        android:textColor="@color/secondary_text"
+        android:text="2.0元"
+        app:layout_constraintHorizontal_bias="0.371"
+        app:layout_constraintLeft_toRightOf="@+id/order_destination"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/order_content" />
+
+    <TextView
+        android:id="@+id/order_content"
+        android:layout_width="284dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="0dp"
+        android:singleLine="false"
+        android:text="TextView"
+        android:textColor="@color/primary_text"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="需要帮忙取个快递，北门圆通快递，"
+        app:layout_constraintLeft_toRightOf="@+id/head"
+        android:layout_marginLeft="8dp" />
+</android.support.constraint.ConstraintLayout>

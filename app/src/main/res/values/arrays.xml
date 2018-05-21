@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="express_company">
+        <item>圆通(北门)</item>
+        <item>申通(麦趣尔)</item>
+        <item>EMS(14号楼)</item>
+        <item>中通(14号楼)</item>
+        <item>顺丰(17号楼)</item>
+        <item>韵达(13号楼)</item>
+        <item>汇通(研2)</item>
+    </string-array>
+    <string-array name="volume">
+        <item>买卖</item>
+        <item>租赁</item>
+    </string-array>
+    <string-array name="weight">
+        <item>很轻</item>
+        <item>一般</item>
+        <item>较重</item>
+        <item>特别重</item>
+    </string-array>
+    <string-array name="sex">
+        <item>男</item>
+        <item>女</item>
+        <item>保密</item>
+    </string-array>
+</resources>

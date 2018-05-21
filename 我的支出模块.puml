@@ -1,0 +1,18 @@
+@startuml
+start
+:已经登录用户进入;
+fork
+:查询收入/支出信息;
+:显示收入/支出信息;
+fork again
+:修改收入/支出信息;
+:填写更改内容;
+if(保存？)then(yes)
+else(no)
+:主界面;
+endif
+end fork
+stop
+
+
+@enduml

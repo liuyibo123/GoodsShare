@@ -1,0 +1,32 @@
+@startuml
+start
+:已经登录用户进入;
+fork
+:添加新的备忘录信息;
+:填写备忘录内容;
+if(保存？)then(yes)
+:保存成功;
+else(no)
+:主界面;
+endif
+fork again
+:查看备忘录信息;
+:显示备忘录信息;
+fork again
+:修改备忘录信息;
+:填写新的备忘录信息;
+if(保存？)then(yes)
+:保存成功;
+else(no)
+:主界面;
+endif
+fork again
+:删除备忘录信息;
+if(确定删除？)then(yes)
+:删除成功;
+else(no)
+:主界面;
+endif
+end fork
+stop
+@enduml

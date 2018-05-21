@@ -1,0 +1,12 @@
+@startuml
+start
+if (是否登录?) then (yes)
+else (no)
+  :登录;
+  if(是否有账号？) then (yes)
+  else(no)
+  :注册;
+  endif
+endif
+stop
+@enduml
