@@ -1,7 +1,10 @@
 package com.upc.help_system.utils.network;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.upc.help_system.model.MainTable;
 import com.upc.help_system.model.User;
+
 
 import java.util.List;
 
@@ -46,5 +49,7 @@ public interface RequestService {
     Call<Void> finishOrder(@Query("id") int id);
 
     @GET("getgoods/")
-    Call<String> getGoods();
+    Call<JsonArray> getGoods();
+    @POST("pub/")
+    Call<String> pub(@Body JsonObject object);
 }

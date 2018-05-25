@@ -17,8 +17,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -39,6 +42,7 @@ import com.upc.help_system.presenter.MainPresenter;
 import com.upc.help_system.utils.BDLocationUtil;
 import com.upc.help_system.utils.SharedPreferenceUtil;
 import com.upc.help_system.utils.widgetutil.SnackbarUtil;
+import com.upc.help_system.view.fragment.OrdersFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -79,17 +83,26 @@ public class MainActivity extends FragmentActivity {
     String username = null;
     String sex;
     String nickname_string;
+    private FragmentManager fragmentManager;
+    private FragmentTransaction transaction;
+    private OrdersFragment ordersFragment;
+    private final String TAG="MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ButterKnife.bind(this);
+        fragmentManager = getSupportFragmentManager();
+
         headerView = navigationView.getHeaderView(0);
         register = (Button) headerView.findViewById(R.id.register);
         login = (Button) headerView.findViewById(R.id.login);
         img_btn = (ImageButton) headerView.findViewById(R.id.head_button);
         nickname = (TextView) headerView.findViewById(R.id.nickname);
         init();
+        showOrders();
         //发布
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,8 +136,7 @@ public class MainActivity extends FragmentActivity {
                         onResume();
                         break;
                     case R.id.navigation_item_change_password:
-                        SharedPreferences sharedPreferences1 = getSharedPreferences("user", MODE_PRIVATE);
-                        username = sharedPreferences1.getString("username", "");
+
                         if (username == null || username.equals("")) {
                             Toast.makeText(MainActivity.this, "请先登录", Toast.LENGTH_SHORT).show();
                             break;
@@ -133,6 +145,7 @@ public class MainActivity extends FragmentActivity {
                         break;
                     case R.id.navigation_item_setip:
                         EditText editText = new EditText(MainActivity.this);
+                        editText.setText(SharedPreferenceUtil.getString("network","ip"));
                             new  AlertDialog.Builder(MainActivity.this)
                                     .setTitle("请输入IP地址:" )
                                     .setIcon(android.R.drawable.ic_dialog_info)
@@ -151,6 +164,7 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+
     }
 
     private void clearString() {
@@ -163,9 +177,9 @@ public class MainActivity extends FragmentActivity {
        //presenter = new MainPresenterImpl(this);
         EventBus.getDefault().register(this);
         getPersimmions();
-        JPushInterface.setDebugMode(true);
-        JPushInterface.init(this);
         Stetho.initializeWithDefaults(this);
+        SharedPreferences sharedPreferences1 = getSharedPreferences("user", MODE_PRIVATE);
+        username = sharedPreferences1.getString("username", "");
         help.toggle();
         BDLocationUtil.getCurrentLoc();
         register.setOnClickListener(new View.OnClickListener() {
@@ -245,7 +259,6 @@ public class MainActivity extends FragmentActivity {
     @TargetApi(23)
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        // TODO Auto-generated method stub
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
     }
@@ -259,22 +272,36 @@ public class MainActivity extends FragmentActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.order:
-                if (username != null && !username.equals("")) {
-                   //todo 展示我的订单
-                } else {
-                    Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
-                    order.toggle();
-                    help.toggle();
-                }
+
                 break;
             case R.id.help:
-                //todo 显示所有订单
+                showOrders();
                 break;
             case R.id.community:
                 break;
             case R.id.collect:
 
                 break;
+        }
+    }
+
+    private void showOrders() {
+        if (username != null && !username.equals("")) {
+            transaction  = fragmentManager.beginTransaction();
+            if(ordersFragment==null){
+                ordersFragment = new OrdersFragment();
+
+            }
+            Log.d(TAG, "onClick: before fragment");
+            transaction.replace(R.id.fragment,ordersFragment);
+            Log.d(TAG, "onClick: end of transaction.replace");
+            transaction.commit();
+            Log.d(TAG, "onClick: end of commit");
+
+        } else {
+            Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
+            order.toggle();
+            help.toggle();
         }
     }
 

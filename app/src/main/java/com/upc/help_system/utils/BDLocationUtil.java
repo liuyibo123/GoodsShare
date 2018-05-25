@@ -48,7 +48,6 @@ public class BDLocationUtil {
                 myLoction.setAddr(bdLocation.getAddrStr());
                 if (bdLocation.getAddrStr() == null || bdLocation.getAddrStr().equals("")) {
                     myLoction.setAddr("未获取");
-                    Toast.makeText(MyApplication.getContext(), "请检查网络", Toast.LENGTH_SHORT).show();
                 }
                 String myloc = MyGson.toJson(myLoction);
                 String bdloc = MyGson.toJson(bdLocation);
@@ -56,16 +55,17 @@ public class BDLocationUtil {
                 SharedPreferences.Editor editor = MyApplication.getContext().getSharedPreferences("location", MODE_PRIVATE).edit();
                 editor.putString("location", myloc);
                 editor.commit();
-                Log.d("MainActivity", "获取位置信息为：" + myloc);
-                mLocationClient.stop();
+                Log.d("location", "获取位置信息为：" + myloc);
+                if(bdLocation.getAddrStr() != null&&!bdLocation.getAddrStr().equals("") ){
+                    mLocationClient.stop();
+                }
             }
-
             @Override
             public void onConnectHotSpotMessage(String s, int i) {
 
             }
         });
-        mLocationClient.start();
+       // mLocationClient.start();
     }
 
 }

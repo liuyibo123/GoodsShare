@@ -7,6 +7,7 @@ import android.content.Context;
 import com.baidu.mapapi.SDKInitializer;
 import com.facebook.stetho.Stetho;
 
+import com.upc.help_system.utils.SharedPreferenceUtil;
 import com.upc.help_system.utils.network.ConConfig;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,7 +28,7 @@ public class MyApplication extends Application {
         super.onCreate();
         //获取Context
         context = getApplicationContext();
-        ConConfig config = new ConConfig();
+        ConConfig.setIp(SharedPreferenceUtil.getString("network","ip"));
 //        SDKInitializer.initialize(context);
     }
 
