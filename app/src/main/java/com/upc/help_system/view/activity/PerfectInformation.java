@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.upc.help_system.R;
 import com.upc.help_system.model.User;
 import com.upc.help_system.utils.network.ConConfig;
@@ -102,13 +103,13 @@ public class PerfectInformation extends Activity {
         user.setPassword(password);
         user.setSex(sex);
         user.setPhonenumber(phonenubmer);
-        Call<String> call = requestService.register(user);
-        call.enqueue(new Callback<String>() {
+        Call<JsonObject> call = requestService.register(user);
+        call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                String s = response.body();
-                Log.d(TAG, "onResponse: "+s);
-                int a = Integer.parseInt(s);
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                JsonObject result = response.body();
+                Log.d(TAG, "onResponse: "+result.getAsString());
+                int a = result.get("code").getAsInt();
                 switch (a) {
                     case 0:
                         SharedPreferences preferences = getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -117,6 +118,7 @@ public class PerfectInformation extends Activity {
                         editor.putString("password", password_string);
                         editor.putString("sex", sex_string);
                         editor.putString("phonenumber", phone_number_string);
+                        editor.putInt("id",result.get("id").getAsInt());
                         editor.commit();
                         Snackbar.make(getWindow().getDecorView(), "注册成功", Snackbar.LENGTH_SHORT).show();
                         break;
@@ -127,7 +129,7 @@ public class PerfectInformation extends Activity {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 Toast.makeText(PerfectInformation.this, "请检查网络", Toast.LENGTH_SHORT).show();
                 Log.d("RegisterActivity", "t:" + t);
             }

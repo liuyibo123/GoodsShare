@@ -26,7 +26,7 @@ public interface RequestService {
     @GET("/maintable/findbycontent")
     Call<List<MainTable>> getOrdersByContent(@Query("query") String query);
     @POST("/regist/")
-    Call<String> register(@Body User user);
+    Call<JsonObject> register(@Body User user);
     @POST("/login/")
     Call<String> login(@Body User user);
     @POST("/getuser/")

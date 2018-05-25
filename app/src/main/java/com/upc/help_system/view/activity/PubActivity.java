@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.upc.help_system.R;
+import com.upc.help_system.utils.SharedPreferenceUtil;
 import com.upc.help_system.utils.network.ConConfig;
 import com.upc.help_system.utils.network.RequestService;
 
@@ -58,10 +59,13 @@ public class PubActivity extends FragmentActivity {
     @BindView(R.id.back_btn)
     ImageButton backBtn;
     private Map<String,Integer> map;
+    private int userid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pub);
+        userid = SharedPreferenceUtil.getInt("user","id");
         ButterKnife.bind(this);
         map = new HashMap<>();
         map.put("食物",1);
@@ -111,6 +115,7 @@ public class PubActivity extends FragmentActivity {
         object.addProperty("phone",goods_phonenumber);
         object.addProperty("description",goods_description);
         object.addProperty("type",map.get(type));
+        object.addProperty("publisher",userid);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ConConfig.url)
                 .addConverterFactory(GsonConverterFactory.create())

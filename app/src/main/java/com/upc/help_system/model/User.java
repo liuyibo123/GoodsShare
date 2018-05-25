@@ -5,6 +5,24 @@ package com.upc.help_system.model;
  */
 
 public class User {
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     private String username;
     private String password;
     private String phonenumber = "保密";

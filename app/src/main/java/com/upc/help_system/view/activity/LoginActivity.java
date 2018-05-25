@@ -115,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putString("password", password_string);
                                 editor.putString("sex", user1.getSex()==1?"男":"女");
                                 editor.putString("phonenumber", user1.getPhonenumber());
+                                editor.putInt("id",user1.getId());
                                 editor.commit();
                             }
 
