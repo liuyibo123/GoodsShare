@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -21,11 +22,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.mapapi.map.MapView;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.upc.help_system.R;
+import com.upc.help_system.utils.Converter;
+import com.upc.help_system.utils.SharedPreferenceUtil;
 import com.upc.help_system.utils.network.ConConfig;
 import com.upc.help_system.utils.network.RequestService;
 import com.upc.help_system.utils.widgetutil.SnackbarUtil;
-import com.upc.help_system.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -43,13 +48,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class DetailActivity extends Activity {
 
-    float tip;
-    String pub_person;
-    String phone_number;
-    String content;
-    int id;
-    String username;
-    String accept_person;
+
     @BindView(R.id.back_btn)
     ImageButton backBtn;
     @BindView(R.id.pub_tv)
@@ -60,55 +59,61 @@ public class DetailActivity extends Activity {
     ImageButton call;
     @BindView(R.id.tip_tv)
     TextView tipTv;
+    @BindView(R.id.qq_tv)
+    TextView qqTv;
+    @BindView(R.id.type)
+    TextView type;
     @BindView(R.id.content_tv)
     TextView contentTv;
     @BindView(R.id.collect)
     Button collect;
     @BindView(R.id.accept)
     Button accept;
-    ConstraintLayout constraintlayout;
-
+    @BindView(R.id.goods_type)
+    TextView goodsType;
+    @BindView(R.id.constraint_layout)
+    ConstraintLayout constraintLayout;
+    private int goodsID ;
+    private int userID;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_details);
         ButterKnife.bind(this);
-        constraintlayout = (ConstraintLayout) findViewById(R.id.constraint_layout);
+        userID = SharedPreferenceUtil.getInt("user","id");
         Intent intent = getIntent();
-        float tip = intent.getFloatExtra("tip", 0);
-        pub_person = intent.getStringExtra("pubperson");
-        phone_number = intent.getStringExtra("phonenumber");
-        content = intent.getStringExtra("content");
-        id = intent.getIntExtra("id", 0);
-        accept_person = intent.getStringExtra("acceptperson");
-        phoneTv.setText(phone_number);
-        tipTv.setText(String.valueOf(tip));
-        pubTv.setText(pub_person);
-        contentTv.setText(content);
-        SharedPreferences sharedpreferenrce = getSharedPreferences("user", MODE_PRIVATE);
-        username = sharedpreferenrce.getString("name", "");
+        String info = intent.getStringExtra("object");
+        Gson gson = new Gson();
+        JsonObject all = gson.fromJson(info,JsonObject.class);
+        goodsID = getIntAttr(all,"pk");
+        JsonObject obj = all.getAsJsonObject("fields");
+        String publishername = getStringAttr(obj,"publishername");
+        String phonenumber = getStringAttr(obj,"phone");
+        String qq = getStringAttr(obj,"qq");
+        int goods_type = getIntAttr(obj,"type");
+        String g_type = Converter.convertGoodsType(goods_type);
+        int trade_type = getIntAttr(obj,"trade_type");
+        String t_type = Converter.convertTradeType(trade_type);
+        String price = getStringAttr(obj,"price");
+        String description = getStringAttr(obj,"name")+"   "
+                +getStringAttr(obj,"description");
+
+        pubTv.setText(publishername);
+        phoneTv.setText(phonenumber);
+        qqTv.setText(qq);
+        goodsType.setText(g_type);
+        type.setText(t_type);
+        tipTv.setText(price);
+        contentTv.setText(description);
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-//        imageView.onDestroy();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-//        imageView.onResume();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
-//        imageView.onPause();
-//    }
+    private String getStringAttr(@NonNull JsonObject object, String attrname){
+        return object.get(attrname).getAsString();
+    }
+    private int getIntAttr(@NonNull JsonObject object,String attrname){
+        return object.get(attrname).getAsInt();
+    }
+
 
     @OnClick({R.id.back_btn, R.id.call, R.id.collect, R.id.accept})
     public void onClick(View view) {
@@ -142,74 +147,105 @@ public class DetailActivity extends Activity {
                     }
                 } else {
                     // 已经获得授权，可以打电话
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone_number));
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneTv.getText().toString()));
                     startActivity(intent);
                 }
                 break;
             case R.id.collect:
-                //todo
+                Log.d("DetailActivity", "userId: "+userID);
+                JsonObject object = new JsonObject();
+                object.addProperty("userid",userID);
+                object.addProperty("goodsid",goodsID);
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(ConConfig.url)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addConverterFactory(ScalarsConverterFactory.create())
+                        .build();
+                RequestService requestService = retrofit.create(RequestService.class);
+                Call<String> call = requestService.collect(object);
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Log.d("DetailActivity", "onResponse: response" +response.body());
+                        String x = response.body();
+                        switch (x){
+                            case "1":
+                                Toast.makeText(DetailActivity.this,"收藏成功",Toast.LENGTH_LONG).show();
+                                break;
+                            case "-1":
+                                Toast.makeText(DetailActivity.this,"已经收藏过该订单",Toast.LENGTH_LONG).show();
+                                break;
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Toast.makeText(DetailActivity.this,"收藏出错",Toast.LENGTH_LONG).show();
+                    }
+                });
                 break;
             case R.id.accept:
-                if (username == null || username.equals("")) {
-                    Snackbar.make(constraintlayout, "接收订单前需要登录", Snackbar.LENGTH_LONG).show();
-                }
-                if (pub_person.equals(username)) {
-                    Snackbar.make(constraintlayout, "不能接收自己的订单", Snackbar.LENGTH_LONG).show();
-                } else if (accept_person != null) {
-                    Snackbar.make(constraintlayout, "该订单已经被接收", Snackbar.LENGTH_LONG).show();
-                } else {
-                    acceptOrder();
-                }
-                break;
+//                if (username == null || username.equals("")) {
+//                    Snackbar.make(constraintlayout, "接收订单前需要登录", Snackbar.LENGTH_LONG).show();
+//                }
+//                if (pub_person.equals(username)) {
+//                    Snackbar.make(constraintlayout, "不能接收自己的订单", Snackbar.LENGTH_LONG).show();
+//                } else if (accept_person != null) {
+//                    Snackbar.make(constraintlayout, "该订单已经被接收", Snackbar.LENGTH_LONG).show();
+//                } else {
+//                    acceptOrder();
+//                }
+//                break;
         }
     }
 
-    private void acceptOrder() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ConConfig.url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build();
-        RequestService requestService = retrofit.create(RequestService.class);
-        Call<String> call = requestService.acceptOrder(id, username);
-        Log.d("DetailActivity", "id:" + id);
-        Log.d("DetailActivity", username);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                switch (response.body()) {
-                    case "1":
-                        Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintlayout, "接单成功", SnackbarUtil.Confirm).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                DetailActivity.this.finish();
-                            }
-                        });
-                        snackbar.show();
-                        break;
-                    default:
-                        Snackbar snackbar1 = SnackbarUtil.ShortSnackbar(constraintlayout, "接单失败", SnackbarUtil.Alert).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                DetailActivity.this.finish();
-                            }
-                        });
-                        snackbar1.show();
-                        break;
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintlayout, "网络原因失败", SnackbarUtil.Alert).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        DetailActivity.this.finish();
-                    }
-                });
-                snackbar.show();
-            }
-        });
-    }
+//    private void acceptOrder() {
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(ConConfig.url)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .addConverterFactory(ScalarsConverterFactory.create())
+//                .build();
+//        RequestService requestService = retrofit.create(RequestService.class);
+//        Call<String> call = requestService.acceptOrder(id, username);
+//        Log.d("DetailActivity", "id:" + id);
+//        Log.d("DetailActivity", username);
+//        call.enqueue(new Callback<String>() {
+//            @Override
+//            public void onResponse(Call<String> call, Response<String> response) {
+//                switch (response.body()) {
+//                    case "1":
+//                        Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintlayout, "接单成功", SnackbarUtil.Confirm).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                DetailActivity.this.finish();
+//                            }
+//                        });
+//                        snackbar.show();
+//                        break;
+//                    default:
+//                        Snackbar snackbar1 = SnackbarUtil.ShortSnackbar(constraintlayout, "接单失败", SnackbarUtil.Alert).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                DetailActivity.this.finish();
+//                            }
+//                        });
+//                        snackbar1.show();
+//                        break;
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<String> call, Throwable t) {
+//                Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintlayout, "网络原因失败", SnackbarUtil.Alert).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        DetailActivity.this.finish();
+//                    }
+//                });
+//                snackbar.show();
+//            }
+//        });
+//    }
 }

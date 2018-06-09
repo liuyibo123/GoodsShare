@@ -3,6 +3,7 @@ package com.upc.help_system;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.facebook.stetho.Stetho;
@@ -26,10 +27,10 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //获取Context
         context = getApplicationContext();
         ConConfig.setIp(SharedPreferenceUtil.getString("network","ip"));
-//        SDKInitializer.initialize(context);
+        Log.d("MyApplication", "ip:  "+ConConfig.ip);
+        SDKInitializer.initialize(context);
     }
 
     //返回
