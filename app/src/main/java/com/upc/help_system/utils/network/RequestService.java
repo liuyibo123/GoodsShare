@@ -50,6 +50,10 @@ public interface RequestService {
 
     @GET("getgoods/")
     Call<JsonArray> getGoods();
+    @POST("getmygoods/")
+    Call<JsonArray> getMyGoods(@Body JsonObject object);
     @POST("pub/")
     Call<String> pub(@Body JsonObject object);
+    @POST("collect/")
+    Call<String> collect(@Body JsonObject object);
 }
