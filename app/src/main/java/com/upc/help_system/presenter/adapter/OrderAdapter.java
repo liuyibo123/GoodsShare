@@ -1,6 +1,7 @@
 package com.upc.help_system.presenter.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.upc.help_system.MyApplication;
 import com.upc.help_system.R;
 import com.upc.help_system.model.MainTable;
 import com.upc.help_system.utils.Container;
@@ -81,14 +83,22 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         TextView description;
         @BindView(R.id.publisher)
         TextView publisher;
+        View parent;
         ViewHolder(View view) {
             super(view);
+            parent = view;
             ButterKnife.bind(this, view);
             view.setOnClickListener(this);
         }
         void bind(int listIndex) {
             JsonObject goods = (JsonObject) array.get(listIndex);
             JsonObject goodsfield = goods.getAsJsonObject("fields");
+            if(goodsfield.get("accepter").getAsInt()>0){
+                parent.setBackgroundColor(Color.parseColor("#dcedc8"));
+            }
+            if(goodsfield.get("accepter").getAsInt()==-1){
+                parent.setBackgroundColor(Color.parseColor("#FFFDBFD4"));
+            }
             head.setImageResource(R.drawable.ic_boy_48);
             tradeType.setText(goodsfield.get("trade_type").getAsInt()==1?"租":"买");
             price.setText(goodsfield.get("price").getAsString());

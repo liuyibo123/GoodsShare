@@ -75,6 +75,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.androidadvance:topsnackbar:0.0.8'
     compile 'com.hyphenate:hyphenate-sdk:3.3.0'
+    compile 'com.github.sujithkanna:smileyrating:1.6.8'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

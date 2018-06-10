@@ -75,11 +75,21 @@ public class DetailActivity extends Activity {
     ConstraintLayout constraintLayout;
     private int goodsID ;
     private int userID;
+    private int publisher;
+    private int accepter;
+    private int flag;
+    private final  String TAG = "DetailActivity";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_details);
         ButterKnife.bind(this);
+        Intent i = getIntent();
+        flag = i.getIntExtra("myorder",0);
+        if(flag == 1){
+            accept.setText("完成");
+            collect.setText("取消");
+        }
         userID = SharedPreferenceUtil.getInt("user","id");
         Intent intent = getIntent();
         String info = intent.getStringExtra("object");
@@ -88,6 +98,8 @@ public class DetailActivity extends Activity {
         goodsID = getIntAttr(all,"pk");
         JsonObject obj = all.getAsJsonObject("fields");
         String publishername = getStringAttr(obj,"publishername");
+        publisher = getIntAttr(obj,"publisher");
+        accepter = getIntAttr(obj,"accepter");
         String phonenumber = getStringAttr(obj,"phone");
         String qq = getStringAttr(obj,"qq");
         int goods_type = getIntAttr(obj,"type");
@@ -152,6 +164,11 @@ public class DetailActivity extends Activity {
                 }
                 break;
             case R.id.collect:
+                if(flag == 1){
+                    // todo 取消
+                    acceptOrder(0);
+                    break;
+                }
                 Log.d("DetailActivity", "userId: "+userID);
                 JsonObject object = new JsonObject();
                 object.addProperty("userid",userID);
@@ -186,66 +203,95 @@ public class DetailActivity extends Activity {
                 });
                 break;
             case R.id.accept:
-//                if (username == null || username.equals("")) {
-//                    Snackbar.make(constraintlayout, "接收订单前需要登录", Snackbar.LENGTH_LONG).show();
-//                }
-//                if (pub_person.equals(username)) {
-//                    Snackbar.make(constraintlayout, "不能接收自己的订单", Snackbar.LENGTH_LONG).show();
-//                } else if (accept_person != null) {
-//                    Snackbar.make(constraintlayout, "该订单已经被接收", Snackbar.LENGTH_LONG).show();
-//                } else {
-//                    acceptOrder();
-//                }
-//                break;
+                if(flag == 1){
+                    //todo 完成
+                    acceptOrder(-1);
+                    //todo 评分
+
+                    break;
+                }
+                if (publisher == userID) {
+                    Snackbar.make(constraintLayout, "不能接收自己的订单", Snackbar.LENGTH_LONG).show();
+                } else if (accepter != 0) {
+                    Snackbar.make(constraintLayout, "该订单已经被接收", Snackbar.LENGTH_LONG).show();
+                } else {
+                    acceptOrder(userID);
+                }
+                break;
         }
     }
 
-//    private void acceptOrder() {
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(ConConfig.url)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .addConverterFactory(ScalarsConverterFactory.create())
-//                .build();
-//        RequestService requestService = retrofit.create(RequestService.class);
-//        Call<String> call = requestService.acceptOrder(id, username);
-//        Log.d("DetailActivity", "id:" + id);
-//        Log.d("DetailActivity", username);
-//        call.enqueue(new Callback<String>() {
-//            @Override
-//            public void onResponse(Call<String> call, Response<String> response) {
-//                switch (response.body()) {
-//                    case "1":
-//                        Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintlayout, "接单成功", SnackbarUtil.Confirm).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                DetailActivity.this.finish();
-//                            }
-//                        });
-//                        snackbar.show();
-//                        break;
-//                    default:
-//                        Snackbar snackbar1 = SnackbarUtil.ShortSnackbar(constraintlayout, "接单失败", SnackbarUtil.Alert).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                DetailActivity.this.finish();
-//                            }
-//                        });
-//                        snackbar1.show();
-//                        break;
+    private void acceptOrder(int userid) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ConConfig.url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build();
+        RequestService requestService = retrofit.create(RequestService.class);
+        Call<String> call = requestService.acceptOrder(goodsID, userid);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                switch (response.body()) {
+                    case "1":
+                        Log.d(TAG, "userid  =  " +userid);
+                        if(userid==0){
+                            Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintLayout, "取消成功", SnackbarUtil.Confirm).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DetailActivity.this.finish();
+                                }
+                            });
+                            snackbar.show();
+                            break;
+                        }
+                        if(userid ==-1){
+//                            Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintLayout, "订单已完成", SnackbarUtil.Confirm).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
 //
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<String> call, Throwable t) {
-//                Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintlayout, "网络原因失败", SnackbarUtil.Alert).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        DetailActivity.this.finish();
-//                    }
-//                });
-//                snackbar.show();
-//            }
-//        });
-//    }
+//                                }
+//                            });
+//                            snackbar.show();
+                            Log.d(TAG, "snackbar.show finish ");
+                            Intent i = new Intent(DetailActivity.this,LoginActivity.class);
+                            i.putExtra("goodsid",goodsID);
+                            Log.d(TAG, "be+fore start activity");
+                            startActivity(i);
+                            Log.d(TAG, "after start activity" );
+                            break;
+                        }
+                        Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintLayout, "接单成功", SnackbarUtil.Confirm).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DetailActivity.this.finish();
+                            }
+                        });
+                        snackbar.show();
+                        break;
+                    default:
+                        Snackbar snackbar1 = SnackbarUtil.ShortSnackbar(constraintLayout, "接单失败", SnackbarUtil.Alert).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DetailActivity.this.finish();
+                            }
+                        });
+                        snackbar1.show();
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintLayout, "网络原因失败", SnackbarUtil.Alert).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DetailActivity.this.finish();
+                    }
+                });
+                snackbar.show();
+            }
+        });
+    }
 }

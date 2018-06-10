@@ -42,6 +42,7 @@ import com.upc.help_system.presenter.MainPresenter;
 import com.upc.help_system.utils.BDLocationUtil;
 import com.upc.help_system.utils.SharedPreferenceUtil;
 import com.upc.help_system.utils.widgetutil.SnackbarUtil;
+import com.upc.help_system.view.fragment.AcceptOrderFragment;
 import com.upc.help_system.view.fragment.MyOrderFragment;
 import com.upc.help_system.view.fragment.OrdersFragment;
 
@@ -87,6 +88,7 @@ public class MainActivity extends FragmentActivity {
     private FragmentTransaction transaction;
     private OrdersFragment ordersFragment;
     private MyOrderFragment myorderFragment;
+    private AcceptOrderFragment acceptOrderFragment;
     private final String TAG="MainActivity";
 
     @Override
@@ -313,6 +315,23 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void showMyOrders() {
+        if (username != null && !username.equals("")) {
+            transaction  = fragmentManager.beginTransaction();
+            if(myorderFragment==null){
+                acceptOrderFragment = new AcceptOrderFragment();
+
+            }
+            Log.d(TAG, "onClick: before fragment");
+            transaction.replace(R.id.fragment,acceptOrderFragment);
+            Log.d(TAG, "onClick: end of transaction.replace");
+            transaction.commit();
+            Log.d(TAG, "onClick: end of commit");
+
+        } else {
+            Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
+            order.toggle();
+            help.toggle();
+        }
     }
 
     private void showOrders() {

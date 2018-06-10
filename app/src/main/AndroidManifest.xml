@@ -130,7 +130,7 @@
         <activity android:name=".view.activity.PerfectInformation" />
         <activity android:name=".view.activity.UpdateUserActivity" />
         <activity android:name=".view.activity.ChangPasswordActivity" />
-
+        <activity android:name=".view.activity.RemarkActivity" />
     </application>
 
 </manifest>

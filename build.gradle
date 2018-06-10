@@ -3,10 +3,10 @@
 buildscript {
 
     repositories {
-        jcenter()
         maven {
             url "http://repo.maven.apache.org/maven2"
         }
+        jcenter()
         google()
     }
     dependencies {
@@ -20,6 +20,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        google()
     }
 }
 

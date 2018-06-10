@@ -1,10 +1,8 @@
 package com.upc.help_system.view.fragment;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 
 import com.google.gson.Gson;
@@ -21,15 +20,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.upc.help_system.MyApplication;
 import com.upc.help_system.R;
-import com.upc.help_system.model.User;
 import com.upc.help_system.presenter.adapter.OrderAdapter;
+import com.upc.help_system.utils.SharedPreferenceUtil;
 import com.upc.help_system.utils.network.ConConfig;
 import com.upc.help_system.utils.network.RequestService;
-import com.upc.help_system.utils.widgetutil.SnackbarUtil;
 import com.upc.help_system.view.activity.DetailActivity;
-import com.upc.help_system.view.activity.MainActivity;
-
-import org.json.JSONArray;
 
 import java.util.Map;
 
@@ -41,15 +36,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
-public class OrdersFragment extends Fragment {
+
+public class AcceptOrderFragment extends Fragment {
     private final String TAG = "OrdersFragment";
     private ViewHolder holder;
     private int flag;
 
     private JsonArray datas;
 
-    public OrdersFragment() {
-        // Required empty public constructor
+    public AcceptOrderFragment() {
+        // Required empty public constructor++--
     }
 
     /**
@@ -76,7 +72,7 @@ public class OrdersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: before inflate view");
-        View view = inflater.inflate(R.layout.fragment_orders, container, false);
+        View view = inflater.inflate(R.layout.fragment_myorders, container, false);
         holder = new ViewHolder(view);
 
         Log.d(TAG, "onCreateView: end of refresh");
@@ -87,45 +83,45 @@ public class OrdersFragment extends Fragment {
             }
         });
         Log.d(TAG, "onCreateView: end of setOnRefreshListener");
-        holder.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Gson gson = new Gson();
-               JsonArray searchArray = new JsonArray();
-               for(JsonElement object:datas){
-                   JsonObject temp = object.getAsJsonObject();
-                   JsonObject fields = temp.get("fields").getAsJsonObject();
-                   for (Map.Entry<String, JsonElement> s:fields.entrySet()){
-                       if(s.getKey().equals("trade_type")||s.getKey().equals("publisher")||s.getKey().equals("type")||s.getKey().equals("accepter")){
-                            continue;
-                       }
-                       if(s.getValue()!=null&&s.getValue().toString().contains(query)){
-                           searchArray.add(temp);
-                           break;
-                       }
-                   }
-               }
-                OrderAdapter.ListItemClickListener listener = new OrderAdapter.ListItemClickListener() {
-                    @Override
-                    public void onListItemClick(int itemIndex) {
-                        JsonObject object = searchArray.get(itemIndex).getAsJsonObject();
-                        String jsonobj = gson.toJson(object);
-                        Intent i = new Intent(getActivity(), DetailActivity.class);
-                        i.putExtra("object", jsonobj);
-                        startActivity(i);
-                    }
-                };
-              if (searchArray.size() > 0) {
-                    holder.recycler.setAdapter(new OrderAdapter(searchArray.size(), listener, searchArray));
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
+//        holder.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                Gson gson = new Gson();
+//                JsonArray searchArray = new JsonArray();
+//                for (JsonElement object : datas) {
+//                    JsonObject temp = object.getAsJsonObject();
+//                    JsonObject fields = temp.get("fields").getAsJsonObject();
+//                    for (Map.Entry<String, JsonElement> s : fields.entrySet()) {
+//                        if (s.getKey().equals("trade_type") || s.getKey().equals("publisher") || s.getKey().equals("type") || s.getKey().equals("accepter")) {
+//                            continue;
+//                        }
+//                        if (s.getValue() != null && s.getValue().toString().contains(query)) {
+//                            searchArray.add(temp);
+//                            break;
+//                        }
+//                    }
+//                }
+//                OrderAdapter.ListItemClickListener listener = new OrderAdapter.ListItemClickListener() {
+//                    @Override
+//                    public void onListItemClick(int itemIndex) {
+//                        JsonObject object = searchArray.get(itemIndex).getAsJsonObject();
+//                        String jsonobj = gson.toJson(object);
+//                        Intent i = new Intent(getActivity(), DetailActivity.class);
+//                        i.putExtra("object", jsonobj);
+//                        startActivity(i);
+//                    }
+//                };
+//                if (searchArray.size() > 0) {
+//                    holder.recycler.setAdapter(new OrderAdapter(searchArray.size(), listener, searchArray));
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
 
         Log.d(TAG, "onCreateView: end of setOnQueryTextListener");
         refresh();
@@ -145,23 +141,32 @@ public class OrdersFragment extends Fragment {
         call.enqueue(new Callback<JsonArray>() {
             @Override
             public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
-                Log.d(TAG, "onResponse: success"+response.body());
+                Log.d(TAG, "onResponse: success" + response.body());
 
                 Gson gson = new Gson();
+                datas = new JsonArray();
                 JsonArray jsonArray = response.body();
-                datas = jsonArray;
+                for (JsonElement object : jsonArray) {
+                    JsonObject temp = object.getAsJsonObject();
+                    JsonObject fields = temp.get("fields").getAsJsonObject();
+                    if (fields.get("accepter").getAsInt() == SharedPreferenceUtil.getInt("user", "id")) {
+                        datas.add(temp);
+                    }
+                }
+
                 OrderAdapter.ListItemClickListener listener = new OrderAdapter.ListItemClickListener() {
                     @Override
                     public void onListItemClick(int itemIndex) {
-                        JsonObject object = jsonArray.get(itemIndex).getAsJsonObject();
+                        JsonObject object = datas.get(itemIndex).getAsJsonObject();
                         String jsonobj = gson.toJson(object);
                         Intent i = new Intent(getActivity(), DetailActivity.class);
                         i.putExtra("object", jsonobj);
+                        i.putExtra("myorder",1);
                         startActivity(i);
                     }
                 };
-                if (jsonArray.size() > 0) {
-                    holder.recycler.setAdapter(new OrderAdapter(jsonArray.size(), listener, jsonArray));
+                if (datas.size() > 0) {
+                    holder.recycler.setAdapter(new OrderAdapter(datas.size(), listener, datas));
                 }
                 holder.swiperefresh.setRefreshing(false);
 
@@ -169,17 +174,34 @@ public class OrdersFragment extends Fragment {
 
             @Override
             public void onFailure(Call<JsonArray> call, Throwable t) {
-                Log.d(TAG, "onFailure: error"+t.getMessage());
+                Log.d(TAG, "onFailure: error" + t.getMessage());
             }
         });
 
     }
 
 
+//    static class ViewHolder {
+//        @BindView(R.id.searchView)
+//        SearchView searchView;
+//        @BindView(R.id.recycler)
+//        RecyclerView recycler;
+//        @BindView(R.id.swiperefresh)
+//        SwipeRefreshLayout swiperefresh;
+//
+//        ViewHolder(View view) {
+//            ButterKnife.bind(this, view);
+//            LinearLayoutManager layoutManager = new LinearLayoutManager(MyApplication.getContext());
+//            Log.d(TAG, "ViewHolder: before setLayoutManager");
+//            recycler.setLayoutManager(layoutManager);
+//        }
+////    }
 
     class ViewHolder {
-        @BindView(R.id.searchView)
-        SearchView searchView;
+        @BindView(R.id.head)
+        ImageView head;
+        @BindView(R.id.constraintLayout)
+        ConstraintLayout constraintLayout;
         @BindView(R.id.recycler)
         RecyclerView recycler;
         @BindView(R.id.swiperefresh)

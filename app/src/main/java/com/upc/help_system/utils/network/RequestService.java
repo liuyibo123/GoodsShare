@@ -31,8 +31,7 @@ public interface RequestService {
     Call<String> login(@Body User user);
     @POST("/getuser/")
     Call<User> getUser(@Body User user);
-    @GET("maintable/acceptorder")
-    Call<String> acceptOrder(@Query("id") int id, @Query("name") String username);
+
 
     @POST("user/update")
     Call<String> updateUser(@Body User user);
@@ -56,4 +55,6 @@ public interface RequestService {
     Call<String> pub(@Body JsonObject object);
     @POST("collect/")
     Call<String> collect(@Body JsonObject object);
+    @GET("accept/")
+    Call<String> acceptOrder(@Query("goodsId") int id, @Query("userId")  int userId);
 }
