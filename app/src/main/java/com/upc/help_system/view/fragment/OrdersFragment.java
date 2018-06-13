@@ -120,7 +120,6 @@ public class OrdersFragment extends Fragment {
                 }
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;

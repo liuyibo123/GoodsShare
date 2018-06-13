@@ -56,4 +56,8 @@
         <item name="android:background">@drawable/button</item>
         <item name="android:textSize">10sp</item>
     </style>
+
+    <style name="Theme.AppStartLoadTranslucent.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.AppStartLoadTranslucent.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

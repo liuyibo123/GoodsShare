@@ -56,6 +56,8 @@ public class PubActivity extends FragmentActivity {
     EditText description;
     @BindView(R.id.btn_pub)
     Button btnPub;
+    @BindView(R.id.location)
+    EditText location;
     @BindView(R.id.back_btn)
     ImageButton backBtn;
     private Map<String,Integer> map;
@@ -107,6 +109,7 @@ public class PubActivity extends FragmentActivity {
         String goods_qq = qq.getText().toString();
         String goods_phonenumber = phonenumber.getText().toString();
         String goods_description = description.getText().toString();
+        String goods_location = location.getText().toString();
         JsonObject object = new JsonObject();
         object.addProperty("name",name);
         object.addProperty("trade_type",tradetype.equals("租")?1:2);
@@ -116,6 +119,7 @@ public class PubActivity extends FragmentActivity {
         object.addProperty("description",goods_description);
         object.addProperty("type",map.get(type));
         object.addProperty("publisher",userid);
+        object.addProperty("location",goods_location);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ConConfig.url)
                 .addConverterFactory(GsonConverterFactory.create())

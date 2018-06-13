@@ -246,19 +246,10 @@ public class DetailActivity extends Activity {
                             break;
                         }
                         if(userid ==-1){
-//                            Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintLayout, "订单已完成", SnackbarUtil.Confirm).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//
-//                                }
-//                            });
-//                            snackbar.show();
-                            Log.d(TAG, "snackbar.show finish ");
-                            Intent i = new Intent(DetailActivity.this,LoginActivity.class);
-                            i.putExtra("goodsid",goodsID);
+                            Intent intent = new Intent(DetailActivity.this,RemarkActivity.class);
+                            intent.putExtra("goodsid",goodsID);
                             Log.d(TAG, "be+fore start activity");
-                            startActivity(i);
-                            Log.d(TAG, "after start activity" );
+                            startActivity(intent);
                             break;
                         }
                         Snackbar snackbar = SnackbarUtil.ShortSnackbar(constraintLayout, "接单成功", SnackbarUtil.Confirm).setActionTextColor(Color.RED).setAction("确定", new View.OnClickListener() {

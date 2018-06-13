@@ -17,6 +17,7 @@ import android.widget.SearchView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.upc.help_system.MyApplication;
 import com.upc.help_system.R;
@@ -31,6 +32,8 @@ import com.upc.help_system.view.activity.MainActivity;
 
 import org.json.JSONArray;
 
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -43,6 +46,7 @@ public class MyOrderFragment extends Fragment {
     private final String TAG = "OrdersFragment";
     private ViewHolder holder;
     private int flag;
+    private JsonArray datas;
     public MyOrderFragment() {
         // Required empty public constructor
     }
@@ -85,27 +89,36 @@ public class MyOrderFragment extends Fragment {
         holder.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-//                Call<List<MainTable>> call = requestService.getOrdersByContent(query);
-//                call.enqueue(new Callback<List<MainTable>>() {
-//                    @Override
-//                    public void onResponse(Call<List<MainTable>> call, Response<List<MainTable>> response) {
-//                        ordersholder.recyclerView.setAdapter(new OrderAdapter(response.body().size(), new OrderAdapter.ListItemClickListener() {
-//                            @Override
-//                            public void onListItemClick(int itemIndex) {
-//                                MainTable table = response.body().get(itemIndex);
-//                                ItemClick(table);
-//                            }
-//                        }, response.body()));
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<List<MainTable>> call, Throwable t) {
-//
-//                    }
-//                });
+                Gson gson = new Gson();
+                JsonArray searchArray = new JsonArray();
+                for(JsonElement object:datas){
+                    JsonObject temp = object.getAsJsonObject();
+                    JsonObject fields = temp.get("fields").getAsJsonObject();
+                    for (Map.Entry<String, JsonElement> s:fields.entrySet()){
+                        if(s.getKey().equals("trade_type")||s.getKey().equals("publisher")||s.getKey().equals("type")||s.getKey().equals("accepter")){
+                            continue;
+                        }
+                        if(s.getValue()!=null&&s.getValue().toString().contains(query)){
+                            searchArray.add(temp);
+                            break;
+                        }
+                    }
+                }
+                OrderAdapter.ListItemClickListener listener = new OrderAdapter.ListItemClickListener() {
+                    @Override
+                    public void onListItemClick(int itemIndex) {
+                        JsonObject object = searchArray.get(itemIndex).getAsJsonObject();
+                        String jsonobj = gson.toJson(object);
+                        Intent i = new Intent(getActivity(), DetailActivity.class);
+                        i.putExtra("object", jsonobj);
+                        startActivity(i);
+                    }
+                };
+                if (searchArray.size() > 0) {
+                    holder.recycler.setAdapter(new OrderAdapter(searchArray.size(), listener, searchArray));
+                }
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
@@ -136,6 +149,7 @@ public class MyOrderFragment extends Fragment {
 
                 Gson gson = new Gson();
                 JsonArray jsonArray = response.body();
+                datas = jsonArray;
                 OrderAdapter.ListItemClickListener listener = new OrderAdapter.ListItemClickListener() {
                     @Override
                     public void onListItemClick(int itemIndex) {

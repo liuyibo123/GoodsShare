@@ -57,4 +57,8 @@ public interface RequestService {
     Call<String> collect(@Body JsonObject object);
     @GET("accept/")
     Call<String> acceptOrder(@Query("goodsId") int id, @Query("userId")  int userId);
+    @POST("remark/")
+    Call<String> remark(@Body JsonObject obj);
+    @GET("analysis/")
+    Call<JsonObject> analysis();
 }

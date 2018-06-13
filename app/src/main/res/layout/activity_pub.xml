@@ -135,6 +135,24 @@
                 android:ems="10" />
         </TableRow>
             <TableRow
+                android:id="@+id/tableRow8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textView111"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="交易地点:"
+                    android:textSize="20dp" />
+                <!-- android:inputType="date"表明是日期输入框 -->
+                <EditText
+                    android:id="@+id/location"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10" />
+            </TableRow>
+            <TableRow
                 android:id="@+id/tableRow7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
@@ -159,6 +177,7 @@
                 android:text="发布"
                 android:textSize="20dp"/>
         </TableLayout>
+
     </LinearLayout>
 
     <android.support.v7.widget.Toolbar

@@ -43,6 +43,7 @@ import com.upc.help_system.utils.BDLocationUtil;
 import com.upc.help_system.utils.SharedPreferenceUtil;
 import com.upc.help_system.utils.widgetutil.SnackbarUtil;
 import com.upc.help_system.view.fragment.AcceptOrderFragment;
+import com.upc.help_system.view.fragment.DataAnalysisFragment;
 import com.upc.help_system.view.fragment.MyOrderFragment;
 import com.upc.help_system.view.fragment.OrdersFragment;
 
@@ -89,6 +90,7 @@ public class MainActivity extends FragmentActivity {
     private OrdersFragment ordersFragment;
     private MyOrderFragment myorderFragment;
     private AcceptOrderFragment acceptOrderFragment;
+    private DataAnalysisFragment dataAnalysisFragment;
     private final String TAG="MainActivity";
 
     @Override
@@ -312,6 +314,18 @@ public class MainActivity extends FragmentActivity {
         }
     }
     private void showCommunity() {
+        if (username != null && !username.equals("")) {
+            transaction  = fragmentManager.beginTransaction();
+            if(myorderFragment==null){
+                dataAnalysisFragment = new DataAnalysisFragment();
+            }
+            transaction.replace(R.id.fragment,dataAnalysisFragment);
+            transaction.commit();
+        } else {
+            Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
+            order.toggle();
+            help.toggle();
+        }
     }
 
     private void showMyOrders() {
